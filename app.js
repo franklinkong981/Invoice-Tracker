@@ -19,7 +19,7 @@ app.get('/favicon.ico', (req, res) => res.sendStatus(204));
 
 //Use Routes organized into other files using Express Router.
 app.use('/companies', companiesRoutes);
-//app.use('/invoices', invoicesRoutes);
+app.use('/invoices', invoicesRoutes);
 
 /** 404 handler */
 
