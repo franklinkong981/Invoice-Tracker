@@ -15,5 +15,16 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/:code', async (req, res, next) => {
+  try {
+    const results = await db.query(`SELECT * FROM companies WHERE code = $1`, [req.params.code]);
+    if (results.rows.length === 0) {
+      throw new ExpressError(`Company with company code of ${req.params.code} can't be found in the database`, 404);
+    }
+    return res.status(200).json({company: results.rows[0]});
+  } catch(e) {
+    return next(e);
+  }
+});
 
 module.exports = router;
