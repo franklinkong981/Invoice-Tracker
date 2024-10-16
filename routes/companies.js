@@ -41,4 +41,26 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+router.put('/', async (req, res, next) => {
+  return next(new ExpressError("You must provide a company code in the request URL specifying the code of the company you want to update", 400));
+});
+
+router.put('/:code', async (req, res, next) => {
+  try {
+    const {code} = req.params;
+
+    if (!req.body.name) throw new ExpressError("You must provide a name attribute in the body specifying the name of the company you want to update", 400);
+    if (!req.body.description) throw new ExpressError("You must provide a description attribute in the body containing a brief description of the company you want to update", 400);
+    const {name, description} = req.body;
+
+    const results = await db.query(`UPDATE companies SET name = $1, description = $2 WHERE code = $3 RETURNING *`, [name, description, code]);
+    if (results.rows.length === 0) {
+      throw new ExpressError(`Company with company code of ${code} wasn't found in the database`, 404);
+    }
+    return res.status(200).json({company: results.rows[0]});
+  } catch(e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
