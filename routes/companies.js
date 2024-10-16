@@ -63,4 +63,21 @@ router.put('/:code', async (req, res, next) => {
   }
 });
 
+router.delete('/', async (req, res, next) => {
+  return next(new ExpressError("You must provide a company code in the request URL specifying the code of the comopany you want to delete", 400));
+});
+
+router.delete('/:code', async (req, res, next) => {
+  try {
+    let code = req.params.code;
+    const deleteResult = await db.query(`DELETE FROM companies WHERE code = $1 RETURNING *`, [code]);
+    if (deleteResult.rows.length === 0) {
+      throw new ExpressError(`Company with company code of ${code} wasn't found in the database`, 404);
+    }
+    return res.status(200).json({status: "deleted"});
+  } catch(e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
