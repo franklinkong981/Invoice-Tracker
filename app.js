@@ -3,7 +3,7 @@
 const express = require("express");
 const morgan = require("morgan");
 
-const ExpressError = require("./expressError");
+const ExpressError = require("./errors/expressError");
 const companiesRoutes = require("./routes/companies");
 const invoicesRoutes = require("./routes/invoices");
 
@@ -16,6 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 // Use middleware logging function and prevent printing favicon.ico error to terminal
 app.use(morgan('dev'));
 app.get('/favicon.ico', (req, res) => res.sendStatus(204));
+
+//Use Routes organized into other files using Express Router.
+app.use('/companies', companiesRoutes);
+//app.use('/invoices', invoicesRoutes);
 
 /** 404 handler */
 
