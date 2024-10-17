@@ -77,9 +77,26 @@ router.put('/:id', async (req, res, next) => {
     const {amt} = req.body;
     const results = await db.query(`UPDATE invoices SET amt = $1 WHERE id = $2 RETURNING *`, [amt, id]);
     if (results.rows.length === 0) {
-      throw new ExpressError(`Could not find invoice with id of ${id} in the database`);
+      throw new ExpressError(`Could not find invoice with id of ${id} in the database`, 400);
     }
     return res.status(200).json({invoice: results.rows[0]});
+  } catch(e) {
+    return next(e);
+  }
+});
+
+router.delete('/', async (req, res, next) => {
+  return next(new ExpressError("You must provide the id in the request URL specifying the id of the invoice you want to delete.", 400));
+});
+
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const {id} = req.params;
+    const results = await db.query(`DELETE FROM invoices WHERE id = $1 RETURNING *`, [id]);
+    if (results.rows.length === 0) {
+      throw new ExpressError(`Could not find invoice with id of ${id} in the database`, 400);
+    }
+    return res.status(200).json({status: "deleted"});
   } catch(e) {
     return next(e);
   }
