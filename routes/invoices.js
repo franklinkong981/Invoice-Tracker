@@ -47,4 +47,22 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
+router.post('/', async (req, res, next) => {
+  try {
+    if (!req.body.comp_code) throw new ExpressError("You must provide a comp_code attribute in the body specifying the code of the company of the invoice you want to add", 400);
+    if (!req.body.amt) throw new ExpressError("You must provide an amt attribute in the body specifying the amount of money owned in the invoice you want to add", 400);
+    
+    const {comp_code, amt} = req.body;
+    const company_results = await db.query(`SELECT * FROM companies WHERE code = $1`, [comp_code]);
+    if (company_results.rows.length === 0) {
+      throw new ExpressError("No company with the company code supplied in the body was not found in the database.", 400);
+    }
+
+    const results = await db.query(`INSERT INTO invoices (comp_code, amt) VALUES ($1, $2) RETURNING *`, [comp_code, amt]);
+    return res.status(201).json({inovoice: results.rows[0]});
+  } catch(e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
