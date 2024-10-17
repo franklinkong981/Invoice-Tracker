@@ -40,7 +40,7 @@ router.get('/:id', async (req, res, next) => {
         name: data.name,
         description: data.description
       }
-    }
+    };
     return res.status(200).json({"invoice": invoice});
   } catch(e) {
     return next(e);
