@@ -65,4 +65,24 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+router.put('/', async (req, res, next) => {
+  return next(new ExpressError("You must provide the id in the request URL specifying the id of the invoice you want to update.", 400));
+});
+
+router.put('/:id', async (req, res, next) => {
+  try {
+    if (!req.body.amt) throw new ExpressError("You must provide an amt attribute in the body specifying the new amount of money owed on the invoice.", 404);
+    
+    const {id} = req.params;
+    const {amt} = req.body;
+    const results = await db.query(`UPDATE invoices SET amt = $1 WHERE id = $2 RETURNING *`, [amt, id]);
+    if (results.rows.length === 0) {
+      throw new ExpressError(`Could not find invoice with id of ${id} in the database`);
+    }
+    return res.status(200).json({invoice: results.rows[0]});
+  } catch(e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
