@@ -58,3 +58,13 @@ describe("GET /companies/:code", () => {
     expect(res.statusCode).toBe(404);
   });
 });
+
+describe("POST /companies", () => {
+  test("Creates a single company", async () => {
+    const res = await request(app).post('/companies').send({code: 'kfc', name:'KFC', description: 'Famous fried chicken restaurant'});
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toEqual({
+      company: {code: 'kfc', name: 'KFC', description: 'Famous fried chicken restaurant'}
+    });
+  });
+});
