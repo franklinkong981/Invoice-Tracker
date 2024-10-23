@@ -1,5 +1,6 @@
 const express = require("express");
 const router = new express.Router();
+const slugify = require("slugify");
 
 const ExpressError = require("../errors/expressError");
 const db = require("../db");
@@ -45,11 +46,11 @@ router.get('/:code', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    if (!req.body.code) throw new ExpressError("You must provide a code attribute in the body specifying the code of the company to add", 400);
     if (!req.body.name) throw new ExpressError("You must provide a name attribute in the body specifying the name of the company to add", 400);
     if (!req.body.description) throw new ExpressError("You must provide a description attribute in the body containing a brief description of the company to add", 400);
     
-    const {code, name, description} = req.body;
+    const {name, description} = req.body;
+    const code = slugify(name, {lower: true, strict: true, locale: 'en'});
     const results = await db.query(`INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING *`, [code, name, description]);
     return res.status(201).json({company: results.rows[0]});
   } catch(e) {
