@@ -17,10 +17,13 @@ beforeEach(async () => {
   const addAppleResult = await db.query(`Insert INTO companies (code, name, description) VALUES ('apple', 'Apple', 'computer comopany founded by Steve Jobs') RETURNING code, name, description`);
   testCompanyApple = addAppleResult.rows[0];
 
-  const addInvoiceMicrosoftResult = await db.query(`INSERT INTO invoices (comp_Code, amt, paid, paid_date) VALUES ('micro', 100, false, null) RETURNING comp_Code, amt, paid, paid_date`);
+  const addInvoiceMicrosoftResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('micro', 100, false, null) RETURNING comp_code, amt, paid`);
   testInvoiceMicrosoft = addInvoiceMicrosoftResult.rows[0];
-  const addInvoiceAppleResult = await db.query(`INSERT INTO invoices (comp_Code, amt, paid, paid_date) VALUES ('apple', 200, false, null) RETURNING comp_Code, amt, paid, paid_date`);
+  const addInvoiceAppleResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('apple', 200, false, null) RETURNING comp_code, amt, paid`);
   testInvoiceApple = addInvoiceMicrosoftResult.rows[0];
+
+  companyList = [testCompanyMicrosoft, testCompanyApple];
+  invoiceList = [testInvoiceMicrosoft, testInvoiceApple];
 });
 
 afterEach(async () => {
@@ -37,3 +40,13 @@ describe("HOPE THIS WORKS", () => {
     expect(1).toBe(1);
   });
 });
+
+describe("GET /invoices", () => {
+  test("Get the list of all invoices", async () => {
+    const res = await request(app).get('/invoices');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.invoices.length).toEqual(2);
+    expect(invoiceList).toContainEqual(res.body.invoices[0]);
+  });
+});
+

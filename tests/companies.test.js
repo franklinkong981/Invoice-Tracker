@@ -19,9 +19,9 @@ beforeEach(async () => {
   const addAppleResult = await db.query(`Insert INTO companies (code, name, description) VALUES ('apple', 'Apple', 'computer comopany founded by Steve Jobs') RETURNING code, name, description`);
   testCompanyApple = addAppleResult.rows[0];
 
-  const addInvoiceMicrosoftResult = await db.query(`INSERT INTO invoices (comp_Code, amt, paid, paid_date) VALUES ('micro', 100, false, null) RETURNING *`);
+  const addInvoiceMicrosoftResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('micro', 100, false, null) RETURNING *`);
   testInvoiceMicrosoft = addInvoiceMicrosoftResult.rows[0];
-  const addInvoiceAppleResult = await db.query(`INSERT INTO invoices (comp_Code, amt, paid, paid_date) VALUES ('apple', 200, false, null) RETURNING *`);
+  const addInvoiceAppleResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('apple', 200, false, null) RETURNING *`);
   testInvoiceApple = addInvoiceMicrosoftResult.rows[0];
 
   companyList = [testCompanyMicrosoft, testCompanyApple];
