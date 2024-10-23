@@ -69,7 +69,7 @@ describe("POST /companies", () => {
   });
 });
 
-describe("PATCH /companies/:code", () => {
+describe("PUT /companies/:code", () => {
   test("Responds with 400 error if company code isn't specified in route", async () => {
     const res = await request(app).put(`/companies/`).send({code: 'microsoft', name: 'Microsoft', description: 'Better than apple'});
     expect(res.statusCode).toBe(400);

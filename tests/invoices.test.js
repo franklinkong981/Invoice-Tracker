@@ -80,3 +80,23 @@ describe("POST /invoices", () => {
   });
 });
 
+describe("PUT /invoices/:id", () => {
+  test("Responds with 400 error if invoice id isn't specified in route", async () => {
+    const res = await request(app).put(`/invoices/`).send({amt: 500});
+    expect(res.statusCode).toBe(400);
+  });
+  test("Updates a single invoice", async () => {
+    const res = await request(app).put(`/invoices/${testInvoiceMicrosoft.id}`).send({amt: 500});
+    expect(res.statusCode).toBe(200);
+    expect(res.body.invoice.comp_code).toEqual("micro");
+    expect(res.body.invoice.paid).toEqual(false);
+    expect(res.body.invoice.amt).toEqual(500);
+  });
+  test("Responds with 404 for invalid invoice id", async () => {
+    const res = await request(app).put(`/invoices/0`).send({amt: 500});
+    expect(res.statusCode).toBe(404);
+  });
+});
+
+
+
