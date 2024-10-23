@@ -96,6 +96,8 @@ describe("DELETE /companies/:code", () => {
     const res = await request(app).delete(`/companies/${testCompanyMicrosoft.code}`);
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({status: "deleted"});
+    const newRes = await request(app).get('/companies');
+    expect(newRes.body.companies.length).toEqual(1);
   });
   test("Responds with 404 for invalid company code", async () => {
     const res = await request(app).delete(`/companies/0`);

@@ -98,5 +98,21 @@ describe("PUT /invoices/:id", () => {
   });
 });
 
-
+describe("DELETE /invoices/:id", () => {
+  test("Responds with 400 error if invoice id isn't specified in route", async () => {
+    const res = await request(app).delete(`/invoices/`);
+    expect(res.statusCode).toBe(400);
+  });
+  test("Deletes a single invoice", async () => {
+    const res = await request(app).delete(`/invoices/${testInvoiceMicrosoft.id}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({status: "deleted"});
+    const newRes = await request(app).get('/invoices');
+    expect(newRes.body.invoices.length).toEqual(1);
+  });
+  test("Responds with 404 for invalid invoice id", async () => {
+    const res = await request(app).delete(`/invoices/0`);
+    expect(res.statusCode).toBe(404);
+  });
+});
 
