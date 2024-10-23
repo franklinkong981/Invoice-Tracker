@@ -22,7 +22,7 @@ beforeEach(async () => {
   const addInvoiceMicrosoftResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('micro', 100, false, null) RETURNING *`);
   testInvoiceMicrosoft = addInvoiceMicrosoftResult.rows[0];
   const addInvoiceAppleResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('apple', 200, false, null) RETURNING *`);
-  testInvoiceApple = addInvoiceMicrosoftResult.rows[0];
+  testInvoiceApple = addInvoiceAppleResult.rows[0];
 
   companyList = [testCompanyMicrosoft, testCompanyApple];
   invoiceList = [testInvoiceMicrosoft, testInvoiceApple];

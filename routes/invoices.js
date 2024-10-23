@@ -8,7 +8,7 @@ const db = require("../db");
 
 router.get('/', async (req, res, next) => {
   try {
-    const results = await db.query(`SELECT comp_code, amt, paid FROM invoices`);
+    const results = await db.query(`SELECT id, comp_code, amt, paid FROM invoices`);
     return res.status(200).json({invoices: results.rows});
   } catch(e) {
     return next(e);
@@ -19,7 +19,7 @@ router.get('/:id', async (req, res, next) => {
   try {
     const invoice_id = req.params.id;
     const result = await db.query(
-      `SELECT i.id, i.comp_code, i.amt, i.paid, i.add_date, i.paid_date, c.name, c.description
+      `SELECT i.id, i.comp_code, i.amt, i.paid, i.paid_date, i.add_date, c.name, c.description
       FROM invoices AS i 
       INNER JOIN companies AS c ON (i.comp_code = c.code) 
       WHERE id = $1`, 

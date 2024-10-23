@@ -17,10 +17,10 @@ beforeEach(async () => {
   const addAppleResult = await db.query(`Insert INTO companies (code, name, description) VALUES ('apple', 'Apple', 'computer comopany founded by Steve Jobs') RETURNING code, name, description`);
   testCompanyApple = addAppleResult.rows[0];
 
-  const addInvoiceMicrosoftResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('micro', 100, false, null) RETURNING comp_code, amt, paid`);
+  const addInvoiceMicrosoftResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('micro', 100, false, null) RETURNING id, comp_code, amt, paid`);
   testInvoiceMicrosoft = addInvoiceMicrosoftResult.rows[0];
-  const addInvoiceAppleResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('apple', 200, false, null) RETURNING comp_code, amt, paid`);
-  testInvoiceApple = addInvoiceMicrosoftResult.rows[0];
+  const addInvoiceAppleResult = await db.query(`INSERT INTO invoices (comp_code, amt, paid, paid_date) VALUES ('apple', 200, false, null) RETURNING id, comp_code, amt, paid`);
+  testInvoiceApple = addInvoiceAppleResult.rows[0];
 
   companyList = [testCompanyMicrosoft, testCompanyApple];
   invoiceList = [testInvoiceMicrosoft, testInvoiceApple];
@@ -47,6 +47,21 @@ describe("GET /invoices", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.invoices.length).toEqual(2);
     expect(invoiceList).toContainEqual(res.body.invoices[0]);
+  });
+});
+
+describe("GET /invoices/:id", () => {
+  test("Gets a single invoice", async () => {
+    const res = await request(app).get(`/invoices/${testInvoiceApple.id}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.invoice.id).toEqual(testInvoiceApple.id);
+    expect(res.body.invoice.amt).toEqual(200);
+    expect(res.body.invoice.paid).toEqual(false);
+    expect(res.body.invoice.company).toEqual(testCompanyApple);
+  });
+  test("Responds with 404 for invalid invoice id", async () => {
+    const res = await request(app).get(`/invoices/0`);
+    expect(res.statusCode).toBe(404);
   });
 });
 
