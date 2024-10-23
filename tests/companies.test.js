@@ -69,9 +69,10 @@ describe("POST /companies", () => {
   });
 });
 
-describe("PATCH /users/:id", () => {
+describe("PATCH /companies/:code", () => {
   test("Responds with 400 error if company code isn't specified in route", async () => {
     const res = await request(app).put(`/companies/`).send({code: 'microsoft', name: 'Microsoft', description: 'Better than apple'});
+    expect(res.statusCode).toBe(400);
   });
   test("Updates a single company", async () => {
     const res = await request(app).put(`/companies/${testCompanyMicrosoft.code}`).send({name: 'Microsoft', description: 'Better than apple'});
@@ -82,6 +83,22 @@ describe("PATCH /users/:id", () => {
   });
   test("Responds with 404 for invalid company code", async () => {
     const res = await request(app).put(`/companies/0`).send({code: 'microsoft', name: 'Microsoft', description: 'Better than apple'});
+    expect(res.statusCode).toBe(404);
+  });
+});
+
+describe("DELETE /companies/:code", () => {
+  test("Responds with 400 error if company code isn't specified in route", async () => {
+    const res = await request(app).delete(`/companies/`);
+    expect(res.statusCode).toBe(400);
+  });
+  test("Deletes a single user", async () => {
+    const res = await request(app).delete(`/companies/${testCompanyMicrosoft.code}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({status: "deleted"});
+  });
+  test("Responds with 404 for invalid company code", async () => {
+    const res = await request(app).delete(`/companies/0`);
     expect(res.statusCode).toBe(404);
   });
 });
