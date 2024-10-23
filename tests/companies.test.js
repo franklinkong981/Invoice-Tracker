@@ -19,9 +19,9 @@ beforeEach(async () => {
   const addAppleResult = await db.query(`Insert INTO companies (code, name, description) VALUES ('apple', 'Apple', 'computer comopany founded by Steve Jobs') RETURNING code, name, description`);
   testCompanyApple = addAppleResult.rows[0];
 
-  const addInvoiceMicrosoftResult = await db.query(`INSERT INTO invoices (comp_Code, amt, paid, paid_date) VALUES ('micro', 100, false, null) RETURNING comp_Code, amt, paid, paid_date`);
+  const addInvoiceMicrosoftResult = await db.query(`INSERT INTO invoices (comp_Code, amt, paid, paid_date) VALUES ('micro', 100, false, null) RETURNING *`);
   testInvoiceMicrosoft = addInvoiceMicrosoftResult.rows[0];
-  const addInvoiceAppleResult = await db.query(`INSERT INTO invoices (comp_Code, amt, paid, paid_date) VALUES ('apple', 200, false, null) RETURNING comp_Code, amt, paid, paid_date`);
+  const addInvoiceAppleResult = await db.query(`INSERT INTO invoices (comp_Code, amt, paid, paid_date) VALUES ('apple', 200, false, null) RETURNING *`);
   testInvoiceApple = addInvoiceMicrosoftResult.rows[0];
 
   companyList = [testCompanyMicrosoft, testCompanyApple];
@@ -43,5 +43,18 @@ describe("GET /companies", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.companies.length).toEqual(2);
     expect(companyList).toContainEqual(res.body.companies[0]);
+  });
+});
+
+describe("GET /companies/:code", () => {
+  test("Gets a single company", async () => {
+    const res = await request(app).get(`/companies/${testCompanyMicrosoft.code}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.company.code).toEqual('micro');
+    expect(res.body.company.invoices[0].amt).toEqual(100);
+  });
+  test("Responds with 404 for invalid company code", async () => {
+    const res = await request(app).get(`/users/0`);
+    expect(res.statusCode).toBe(404);
   });
 });
