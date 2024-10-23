@@ -65,3 +65,18 @@ describe("GET /invoices/:id", () => {
   });
 });
 
+describe("POST /invoices", () => {
+  test("Invalid company code leads to 400 error", async () => {
+    const res = await request(app).post('/invoices').send({comp_code: "abc", amt: 300});
+    expect(res.statusCode).toBe(400);
+  });
+  test("Creates a single invoice", async () => {
+    const res = await request(app).post('/invoices').send({comp_code: "micro", amt: 300});
+    console.log(res.body);
+    expect(res.statusCode).toBe(201);
+    expect(res.body.invoice.comp_code).toEqual("micro");
+    expect(res.body.invoice.amt).toEqual(300);
+    expect(res.body.invoice.paid).toEqual(false);
+  });
+});
+

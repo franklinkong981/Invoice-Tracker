@@ -59,7 +59,7 @@ router.post('/', async (req, res, next) => {
     }
 
     const results = await db.query(`INSERT INTO invoices (comp_code, amt) VALUES ($1, $2) RETURNING *`, [comp_code, amt]);
-    return res.status(201).json({inovoice: results.rows[0]});
+    return res.status(201).json({invoice: results.rows[0]});
   } catch(e) {
     return next(e);
   }
