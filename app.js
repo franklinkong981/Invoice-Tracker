@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const ExpressError = require("./errors/expressError");
 const companiesRoutes = require("./routes/companies");
 const invoicesRoutes = require("./routes/invoices");
+const industriesRoutes = require("./routes/industries");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get('/favicon.ico', (req, res) => res.sendStatus(204));
 //Use Routes organized into other files using Express Router.
 app.use('/companies', companiesRoutes);
 app.use('/invoices', invoicesRoutes);
+app.use('/industries', industriesRoutes);
 
 /** 404 handler */
 
