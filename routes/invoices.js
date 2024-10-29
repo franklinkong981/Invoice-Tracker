@@ -71,11 +71,22 @@ router.put('/', async (req, res, next) => {
 
 router.put('/:id', async (req, res, next) => {
   try {
-    if (!req.body.amt) throw new ExpressError("You must provide an amt attribute in the body specifying the new amount of money owed on the invoice.", 404);
-    
+    if (!req.body.amt) throw new ExpressError("You must provide an amt integer attribute in the body specifying the new amount of money owed on the invoice.", 400);
+    if (!req.body.hasOwnProperty('paid')) throw new ExpressError("You must provide a paid boolean attribute in the body specifying whether you are paying or unpaying the invoice.", 400);
     const {id} = req.params;
-    const {amt} = req.body;
-    const results = await db.query(`UPDATE invoices SET amt = $1 WHERE id = $2 RETURNING *`, [amt, id]);
+    const {amt, paid} = req.body;
+    let results;
+
+    if (paid) {
+      results = await db.query(`UPDATE invoices SET amt = $1, paid = 'TRUE', paid_date = CURRENT_DATE
+        WHERE id = $2 RETURNING *`,
+        [amt, id]);
+    } else {
+      results = await db.query(`UPDATE invoices SET amt = $1, paid = 'FALSE', paid_date = NULL
+        WHERE id = $2 RETURNING *`,
+        [amt, id]);
+    }
+
     if (results.rows.length === 0) {
       throw new ExpressError(`Could not find invoice with id of ${id} in the database`, 404);
     }
