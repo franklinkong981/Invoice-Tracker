@@ -22,7 +22,7 @@ CREATE TABLE invoices (
 );
 
 CREATE TABLE industries (
-  code text PRIMARY KEY,
+  industry_code text PRIMARY KEY,
   industry text NOT NULL UNIQUE
 );
 
@@ -45,7 +45,7 @@ INSERT INTO invoices (comp_Code, amt, paid, paid_date)
          ('micro', 400, false, null),
          ('kfc', 20, false, null);
 
-INSERT INTO industries (code, industry)
+INSERT INTO industries (industry_code, industry)
   VALUES ('tech', 'Technology'),
          ('fast_food', 'Fast Food');
 

@@ -22,7 +22,7 @@ router.post('/', async (req, res, next) => {
     
     const {industry} = req.body;
     const code = slugify(industry, {lower: true, strict: true, locale: 'en'});
-    const results = await db.query(`INSERT INTO industries (code, industry) VALUES ($1, $2) RETURNING *`, [code, industry]);
+    const results = await db.query(`INSERT INTO industries (industry_code, industry) VALUES ($1, $2) RETURNING *`, [code, industry]);
     return res.status(201).json({industry: results.rows[0]});
   } catch(e) {
     return next(e);
